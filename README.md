@@ -14,7 +14,11 @@ Once it's built run it:
 
 **NOTE2:**  I can (over time) put some binaries on for specific OS's (if I can get my hands on the OS in question).
 
+**NOTE3:** This calculates FIFO (First in first out).  It is not the only way to calculate CGT, but there's an implicit presumption that in the past you have used FIFO too (these results are even less valid if you haven't).  There's also some complexity around how gains and losses are accounted for before the CGT discount is calculated which might affect your personal situation if you have other CGT events outside the RAIZ sphere
+
 IT is what it is - it comes with no guarantees - if the tax man comes looking for you, it is not my responsibility, because I never said this perfectly calculates CGT liability.
 
 Feedback is more than welcome (however I have many hobbies and with something like this I'll get to it when I get to it).  You are more than welcome to copy, refactor, improve, or rewrite any part of this (in hindsight I think I could have made a more user-friendly thing in another language - but I like C and I did it for me).
 
+
+Easy Reader Version:  This attempts to calculate CGT liability by assesiing your transactions FIFO.  It is probably a useful styarting point for tax preparation, but often your situation might be more complicated than this tool can account for.
