@@ -605,7 +605,7 @@ void save_output(stock *stocklist)
                 {
                     buy_date = &(buys->buy_date);
                     buy_quant = buys->original_units;
-                    bought_total = buy_quant* buy_price;
+                    //bought_total = buy_quant* buy_price;
                     bought_total = buys->total;
                     buy_remaining = buys->held_units;
                     sold_units *sales = buys->sales;
