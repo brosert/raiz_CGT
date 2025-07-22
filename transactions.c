@@ -139,7 +139,7 @@ void print_queue(queued_transaction *queue)
     transaction_node *curr_trans = queue->head;
     while(curr_trans)
     {
-        printf("[%.8s: %s Units [%Lf] Price [%Lf] Cost [%Lf]\n", &(curr_trans->date.year), curr_trans->ticker,
+        printf("[%.8s: %s Units [%.8Lf] Price [%.8Lf] Cost [%.8Lf]\n", &(curr_trans->date.year), curr_trans->ticker,
                 curr_trans->units, curr_trans->price, curr_trans->total);
         curr_trans = curr_trans->next;
     }
@@ -388,7 +388,7 @@ void process_sale(stock *stocklist, transaction_node *node)
             }
             else
             {
-                printf("Warning - [%s][%Lf] Unaccounted for - possible rounding errors\n", node->ticker, units_to_sell);
+                printf("Warning - [%s][%.8Lf] Unaccounted for - possible rounding errors\n", node->ticker, units_to_sell);
                 // I think we will add this as a special transaction afterwards
                 break;
             }
@@ -451,12 +451,12 @@ void print_stock(stock *stocklist)
         bought_units *buys = localstock->sold_units;
         while(buys)
         {
-            printf("\t[%s] Total: %Lf Remaining: %Lf Buy Price: %Lf\n", &(buys->buy_date), buys->original_units,
+            printf("\t[%s] Total: %.8Lf Remaining: %.8Lf Buy Price: %.8Lf\n", &(buys->buy_date), buys->original_units,
                     buys->held_units,  buys->bought_price);
             sold_units *sales = buys->sales;
             while(sales)
             {
-                printf("\t\t[%s] Sold: %Lf Sell Price %Lf\n", &(sales->sale_date), sales->units_sold, sales->sold_price);
+                printf("\t\t[%s] Sold: %.8Lf Sell Price %.8Lf\n", &(sales->sale_date), sales->units_sold, sales->sold_price);
                 sales = sales->next;
             }
             buys = buys->next;
@@ -466,12 +466,12 @@ void print_stock(stock *stocklist)
         buys = localstock->part_sold_units;
         while(buys)
         {
-            printf("\t[%s] Total: %Lf Remaining: %Lf Buy Price: %Lf\n", &(buys->buy_date), buys->original_units,
+            printf("\t[%s] Total: %.8Lf Remaining: %.8Lf Buy Price: %.8Lf\n", &(buys->buy_date), buys->original_units,
                     buys->held_units,  buys->bought_price);
             sold_units *sales = buys->sales;
             while(sales)
             {
-                printf("\t\t[%s] Sold: %Lf Sell Price %Lf\n", &(sales->sale_date), sales->units_sold, sales->sold_price);
+                printf("\t\t[%s] Sold: %.8Lf Sell Price %.8Lf\n", &(sales->sale_date), sales->units_sold, sales->sold_price);
                 sales = sales->next;
             }
             buys = buys->next;
@@ -481,7 +481,7 @@ void print_stock(stock *stocklist)
         buys = localstock->owned_units;
         while(buys)
         {
-            printf("\t[%s] Total: %Lf Remaining: %Lf Buy Price: %Lf\n", &(buys->buy_date), buys->original_units,
+            printf("\t[%s] Total: %.8Lf Remaining: %.8Lf Buy Price: %.8Lf\n", &(buys->buy_date), buys->original_units,
                     buys->held_units,  buys->bought_price);
             buys = buys->next;
         }
@@ -575,7 +575,9 @@ void save_output(stock *stocklist)
     char *ticker;
     trans_date *buy_date, *sell_date;
     trans_date today = {0x00};
-    long double buy_quant, buy_price, buy_remaining, sell_quant, sell_price, bought_total, sold_total, gain_loss, original_price;
+    long double buy_quant, buy_price, buy_remaining, sell_quant, sell_price, bought_total, sold_total, gain_loss; 
+    long double original_price;
+
     int days_held;
     char filename[64];
     sprintf(filename, "output_%lu.csv", (unsigned long)time(NULL));
@@ -589,7 +591,7 @@ void save_output(stock *stocklist)
     if(fp)
     {
         fprintf(fp, "Ticker, Buy Date, Units Bought, Buy Price, Units Remaining, Sell Date, Units Sold, Sell Price, Buy"
-                "Cost, Buy Cost adjusted,Sell Cost, Profit/Loss, Days Held\n");
+                " Cost, Buy Cost adjusted,Sell Cost, Profit/Loss, Days Held\n");
         while(localstock)
         {
             ticker = localstock->ticker;
@@ -603,17 +605,17 @@ void save_output(stock *stocklist)
                 {
                     buy_date = &(buys->buy_date);
                     buy_quant = buys->original_units;
-                    buy_price = buys->bought_price;
                     bought_total = buy_quant* buy_price;
+                    bought_total = buys->total;
                     buy_remaining = buys->held_units;
                     sold_units *sales = buys->sales;
 
                     sell_date = &today;
-                    sell_quant = 0;
-                    sell_price = 0;
-                    sold_total = 0;
-                    gain_loss = 0;
-                    original_price = 0;
+                    sell_quant = 0l;
+                    sell_price = 0l;
+                    sold_total = 0l;
+                    gain_loss = 0l;
+                    original_price = 0l;
                     days_held = days_between(buy_date, sell_date);
                     if(sales)
                     {
@@ -625,14 +627,14 @@ void save_output(stock *stocklist)
                             sold_total = sell_quant *sell_price;
                             original_price = sell_quant * buy_price;
                             gain_loss = sold_total- original_price;
-                            original_price = original_price;
+                            //original_price = original_price;
                             days_held = days_between(buy_date, sell_date);
 
                            calculate_fin_year(sell_date, current_fin_year); 
                            add_financial_year( &fin_years, current_fin_year, gain_loss, days_held);
                             if(buy_quant)
                             {
-                                fprintf(fp, "%s,%s,%Lf,%Lf,%Lf,%s,%Lf,%Lf,%Lf,%Lf,%Lf,%Lf,%d\n",ticker,
+                                fprintf(fp, "%s,%s,%.8Lf,%.8Lf,%.8Lf,%s,%.8Lf,%.8Lf,%.8Lf,%.8Lf,%.8Lf,%.8Lf,%d\n",ticker,
                                         buy_date,buy_quant,buy_price,buy_remaining, sell_date, sell_quant,sell_price,
                                         bought_total, original_price, sold_total, gain_loss,
                                         days_held );
@@ -641,7 +643,7 @@ void save_output(stock *stocklist)
                             }
                             else
                             {
-                                fprintf(fp, "%s,%s,,%Lf,,%s,%LF,%Lf,%LF,%Lf,%Lf,%Lf,%d\n",ticker,
+                                fprintf(fp, "%s,%s,,%.8Lf,,%s,%.8LF,%.8Lf,%.8LF,%.8Lf,%.8Lf,%.8Lf,%d\n",ticker,
                                         buy_date,buy_price, sell_date, sell_quant,sell_price, bought_total,
                                         original_price, sold_total, gain_loss,
                                         days_held );
@@ -651,7 +653,7 @@ void save_output(stock *stocklist)
                     }
                     else
                     {
-                        fprintf(fp, "%s,%s,%Lf,%Lf,%Lf,,,,%Lf,%Lf,,,%d\n",ticker,
+                        fprintf(fp, "%s,%s,%.8Lf,%.8Lf,%.8Lf,,,,%.8Lf,%.8Lf,,,%d\n",ticker,
                                 buy_date,buy_quant,buy_price,buy_remaining,  bought_total, buy_price*buy_remaining, 
                                 days_held );
                     }
@@ -708,13 +710,13 @@ void save_output(stock *stocklist)
                 curr_yr = curr_yr->next;
             }
         fprintf(fp, "\n\n\"DISCLAIMER:  Double check all values and make sure you understand what is what\"\n");
-        fprintf(fp, "\"\t\tSoftware suthor takes no responsibility for accuracy of calculations, nor how they usre used"
+        fprintf(fp, "\"\t\tSoftware author takes no responsibility for accuracy of calculations, nor how they are used"
         "on a tax return\"\n");
         fprintf(fp, "\n\"Recommend using this to create entries in MyTax's CGT tracking tool. \"\n");
         fprintf(fp, "\"If a year has both ineligible and eligible transactions, declare them separately\"\n");
 
         fprintf(fp, "\n\n\"** NO RESPONSIBILITY IS TAKEN FOR THE CALCULATION NOR HOW THE DATA IS USED\"\n");
-        fprintf(fp, "\"\tTHE AUTHOR IS *NOT* A QUALIFIED TAX ACCOUNTANT AND THEY'RE INTERPRETATION OF HOW\"\n");
+        fprintf(fp, "\"\tTHE AUTHOR IS *NOT* A QUALIFIED TAX ACCOUNTANT AND THEIR INTERPRETATION OF HOW\"\n");
         fprintf(fp, "\"\tCGT IS CALCULATED SHOULD NOT BE ASSUMED TO BE CORRECT.  UNDERSTANDING HOW THE DATA\"\n");
         fprintf(fp, "\"\tIS GENERATED AND WHAT IT MEANS IS IMPORTANT IF USING THIS DATA TO POPULATE YOUR TAX\"\n");
         fprintf(fp,"\"\tRETURN - IF IN DOUBT, ENGAGE A PROFESSIONAL.\"\n");
