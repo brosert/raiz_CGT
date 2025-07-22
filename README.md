@@ -8,6 +8,8 @@ For Windows you might need `mingw` or similar (I haven't done anything on window
 Once it's built run it:
 `cgt_calc <filename>` where `filename` is the CSV file downloaded from RAIZ (go to `My Settings`->`Statements` and click `Send CSV of All Trades` (RHS).  This will email you a CSV file you can feed in.
 
+`temp.csv` is included as a valid downloaded file that can be used as an example.
+
 **NOTE:**  I haven't thoroughly debugged.  There is some variation that IMO is bigger than just rounding errors (although some of it is just differences in what the statement rounds compared to raiz).  The onus is on the user to double check any calculations and decide whether they're accurate.
 
 **NOTE2:**  I can (over time) put some binaries on for specific OS's (if I can get my hands on the OS in question).
