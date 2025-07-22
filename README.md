@@ -20,5 +20,8 @@ IT is what it is - it comes with no guarantees - if the tax man comes looking fo
 
 Feedback is more than welcome (however I have many hobbies and with something like this I'll get to it when I get to it).  You are more than welcome to copy, refactor, improve, or rewrite any part of this (in hindsight I think I could have made a more user-friendly thing in another language - but I like C and I did it for me).
 
+Incidentally, I have considered porting this to a slightly easier to use language/format.  Feel free to let me know if that would be useful (might not have time to do it in time for this tax cycle).  Alternatively, feel free to taake some ofd the ideas an port it ot another language yourself (to me it feels like something that should be reasonably easy in Python).
 
 Easy Reader Version:  This attempts to calculate CGT liability by assesiing your transactions FIFO.  It is probably a useful styarting point for tax preparation, but often your situation might be more complicated than this tool can account for.
+
+
